@@ -3,43 +3,38 @@
 
 #include <memory.h>
 #include <iostream>
-#include "XLAutoPtr.h"
+#include "CommunicationHeader.h"
 
-enum XLEventQueueConfig
-{
-   XLEventQueueConfig_MaxSize = 256,
-   XLEventQueueMaxm_pDataSize = 128
-};
 
 
 
 class XLThreadEvent
 {
-public:
-	typedef XLAutoPtr::XLSmartArrayPtr<char> CHARSTORAGE;
-private:
-	char* m_pData;
-	int m_iLength;
-	int m_iType;
+	CHARSTORAGE m_pData;
+	int         m_iLength;
+	int         m_iType;
 
 public:
-	XLThreadEvent():m_pData(0),m_iLength(0), m_iType(0)
+	XLThreadEvent():m_pData(),m_iLength(0), m_iType(0)
 	{
 	}
-	XLThreadEvent(int size):m_pData(0),m_iLength(size > 0? size: 0), m_iType(0)
+	XLThreadEvent(int size):m_pData(),m_iLength(0), m_iType(0)
 	{
 		if(m_iLength > 0)
 		{
 			m_pData = new char[m_iLength];
 		}
 	}
-	XLThreadEvent(const XLThreadEvent& other):m_pData(0),m_iLength(0), m_iType(0)
+	XLThreadEvent(const char* pData, int size):m_pData(),m_iLength(0), m_iType(0)
 	{
-		if(other.m_pData)
-		{
-			SetData(other.m_pData, other.m_iLength);
-		}
+		ReadFrom(pData, size);
+	}
+
+	XLThreadEvent(const XLThreadEvent& other):m_pData(),m_iLength(0), m_iType(0)
+	{
 		m_iType = other.m_iType;
+		m_pData = other.m_pData;
+		m_iLength = other.m_iLength;
 		
 	}
 	XLThreadEvent& operator = (const XLThreadEvent& other)
@@ -49,14 +44,8 @@ public:
 			return *this;
 		}
 		m_iType = other.m_iType;
-		if(other.m_pData)
-		{
-			SetData(other.m_pData, other.m_iLength);
-		}
-		else
-		{
-			Reset();
-		}
+		m_pData = other.m_pData;
+		m_iLength = other.m_iLength;
 		return *this;
 	}
 
@@ -139,10 +128,9 @@ public:
 		if(IsValid() && Data && (Length > 0))
 		{
 			int beforelength = m_iLength;
-			char* newplace = new char[m_iLength + Length];
+			CHARSTORAGE newplace = new char[m_iLength + Length];
 			memcpy(newplace, m_pData, m_iLength);
 			memcpy(&newplace[m_iLength], Data, Length);
-			Reset();
 			m_pData = newplace;
 			m_iLength = beforelength + Length;
 		}
@@ -155,7 +143,7 @@ public:
 	const int  GetType()  const                           {return m_iType;} 
 	const int  GetDataLength()    const                   {return m_iLength;} 
 	const char* GetData()const                            {return m_pData;}	
-	char* GetDataPtr()                                    {return m_pData;}
+	CHARSTORAGE GetDataPtr()                              {return m_pData;}
 
 	void CopyData(char* dest, int Length) const
 	{
@@ -194,7 +182,7 @@ public:
 		}
 	}
 
-	void ReadFrom(char* source, int length)
+	void ReadFrom(const char* source, int length)
 	{
 		Reset();
 		if(source && (length >= WritableSize()))
@@ -222,7 +210,7 @@ public:
 	CHARSTORAGE ConvertIntoCharBuffer() const
 	{
 		CHARSTORAGE s( new char[WritableSize()]);
-		WriteTo(s.GetIntArray(), WritableSize());
+		WriteTo(s, WritableSize());
 		return s;
 	}
 
@@ -230,7 +218,7 @@ public:
 	{
 		if(m_pData)
 		{
-			delete []m_pData;
+			//delete []m_pData;
 			m_pData = 0;
 		}
 		m_iLength = 0;

@@ -6,6 +6,7 @@
 #include "XLSemaPhore.h"
 #include "Windows.h"
 #include <string>
+//#include "CommunicationHeader.h"
 //#include "IProjectInterface.h"
 
 enum ThreadConfig

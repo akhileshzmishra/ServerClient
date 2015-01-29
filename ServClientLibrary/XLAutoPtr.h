@@ -36,7 +36,7 @@ public:
 		}
 	}
 
-	int RefCount()
+	int RefCount() const
 	{
 		return m_iCount;
 	}
@@ -81,7 +81,7 @@ public:
 		m_pData = new RefCounter(data);
 	}
 
-	virtual ~XLSharedSmPtr()
+	~XLSharedSmPtr()
 	{
 		ReleaseData();
 	}
@@ -123,18 +123,151 @@ public:
 
 	bool operator < (const XLSharedSmPtr<T>& other) const
 	{
-		return m_pData->GetData() < other.m_pData->GetData();
-
+		if(m_pData && other.m_pData)
+		{
+			return m_pData->GetData() < other.m_pData->GetData();
+		}
+		else if(other.m_pData)
+		{
+			return 0 < other.m_pData->GetData();
+		}
+		else if(m_pData)
+		{
+			return m_pData->GetData() < 0;
+		}
+		return false;
 	}
 
 	bool operator > (const XLSharedSmPtr<T>& other) const
 	{
-		return m_pData->GetData() > other.m_pData->GetData();
+		if(m_pData && other.m_pData)
+		{
+			return m_pData->GetData() > other.m_pData->GetData();
+		}
+		else if(other.m_pData)
+		{
+			return 0 > other.m_pData->GetData();
+		}
+		else if(m_pData)
+		{
+			return m_pData->GetData() > 0;
+		}
+		return false;
+	}
+
+	bool operator <= (const XLSharedSmPtr<T>& other) const
+	{
+		if(m_pData && other.m_pData)
+		{
+			return m_pData->GetData() <= other.m_pData->GetData();
+		}
+		else if(other.m_pData)
+		{
+			return 0 <= other.m_pData->GetData();
+		}
+		else if(m_pData)
+		{
+			return m_pData->GetData() <= 0;
+		}
+		return true;
+	}
+
+	bool operator >= (const XLSharedSmPtr<T>& other) const
+	{
+		if(m_pData && other.m_pData)
+		{
+			return m_pData->GetData() >= other.m_pData->GetData();
+		}
+		else if(other.m_pData)
+		{
+			return 0 >= other.m_pData->GetData();
+		}
+		else if(m_pData)
+		{
+			return m_pData->GetData() >= 0;
+		}
+		return true;
 	}
 
 	bool operator == (const XLSharedSmPtr<T>& other) const
 	{
-		return m_pData->GetData() == other.m_pData->GetData();
+		if(m_pData && other.m_pData)
+		{
+			return m_pData->GetData() == other.m_pData->GetData();
+		}
+		else if(other.m_pData)
+		{
+			return false;
+		}
+		else if(m_pData)
+		{
+			return false;
+		}
+		return true;
+	}
+
+	T* operator + (int x)
+	{
+		return (m_pData->GetData() + x);
+	}
+
+	XLSharedSmPtr<T>& operator += (int x)
+	{
+		if(m_pData)
+		{
+			m_pData->GetData() += x;
+		}
+		return *this;
+	}
+
+	XLSharedSmPtr<T>& operator ++(int x)
+	{
+		if(m_pData)
+		{
+			m_pData->GetData()++;
+		}
+		return *this;
+	}
+
+	XLSharedSmPtr<T>& operator ++()
+	{
+		if(m_pData)
+		{
+			++(m_pData->GetData());
+		}
+		return *this;
+	}
+
+	T* operator - (int x)
+	{
+		return (m_pData->GetData() - x);
+	}
+
+	XLSharedSmPtr<T>& operator -= (int x)
+	{
+		if(m_pData)
+		{
+			m_pData->GetData() -= x;
+		}
+		return *this;
+	}
+
+	XLSharedSmPtr<T>& operator --(int x)
+	{
+		if(m_pData)
+		{
+			m_pData->GetData()--;
+		}
+		return *this;
+	}
+
+	XLSharedSmPtr<T>& operator --()
+	{
+		if(m_pData)
+		{
+			--(m_pData->GetData());
+		}
+		return *this;
 	}
 
 	T* GetData()                                   
@@ -248,7 +381,7 @@ public:
 		}
 	}
 
-	int RefCount()
+	int RefCount() const
 	{
 		return m_iCount;
 	}
@@ -293,7 +426,7 @@ public:
 		m_pData = new RefCounter(data);
 	}
 
-	virtual ~XLSharedArraySmPtr()
+	~XLSharedArraySmPtr()
 	{
 		ReleaseData();
 	}
@@ -335,19 +468,98 @@ public:
 
 	bool operator < (const XLSharedArraySmPtr<T>& other) const
 	{
-		return m_pData->GetData() < other.m_pData->GetData();
+		if(m_pData && other.m_pData)
+		{
+			return m_pData->GetData() < other.m_pData->GetData();
+		}
+		else if(other.m_pData)
+		{
+			return 0 < other.m_pData->GetData();
+		}
+		else if(m_pData)
+		{
+			return m_pData->GetData() < 0;
+		}
+		return false;
 	}
 
 	bool operator > (const XLSharedArraySmPtr<T>& other) const
 	{
-		return m_pData->GetData() > other.m_pData->GetData();
+		if(m_pData && other.m_pData)
+		{
+			return m_pData->GetData() > other.m_pData->GetData();
+		}
+		else if(other.m_pData)
+		{
+			return 0 > other.m_pData->GetData();
+		}
+		else if(m_pData)
+		{
+			return m_pData->GetData() > 0;
+		}
+		return false;
+	}
+
+	bool operator <= (const XLSharedArraySmPtr<T>& other) const
+	{
+		if(m_pData && other.m_pData)
+		{
+			return m_pData->GetData() <= other.m_pData->GetData();
+		}
+		else if(other.m_pData)
+		{
+			return 0 <= other.m_pData->GetData();
+		}
+		else if(m_pData)
+		{
+			return m_pData->GetData() <= 0;
+		}
+		return true;
+	}
+
+	bool operator >= (const XLSharedArraySmPtr<T>& other) const
+	{
+		if(m_pData && other.m_pData)
+		{
+			return m_pData->GetData() >= other.m_pData->GetData();
+		}
+		else if(other.m_pData)
+		{
+			return 0 >= other.m_pData->GetData();
+		}
+		else if(m_pData)
+		{
+			return m_pData->GetData() >= 0;
+		}
+		return true;
 	}
 
 	bool operator == (const XLSharedArraySmPtr<T>& other) const
 	{
-		return m_pData->GetData() == other.m_pData->GetData();
+		if(m_pData && other.m_pData)
+		{
+			return m_pData->GetData() == other.m_pData->GetData();
+		}
+		else if(other.m_pData)
+		{
+			return false;
+		}
+		else if(m_pData)
+		{
+			return false;
+		}
+		return true;
 	}
 	
+	T* operator + (int x)
+	{
+		return (m_pData->GetData() + x);
+	}
+
+	T* operator - (int x)
+	{
+		return (m_pData->GetData() - x);
+	}
 
 	T* GetData()                                   
 	{
@@ -449,8 +661,8 @@ public:
 			delete m_ptr;
 		}
 	}
-	bool Viable()
-	{
+	bool Viable() const
+	{ 
 		return (m_ptr != 0);
 	}
 	T* operator->()
@@ -469,11 +681,11 @@ public:
 		other.m_ptr = 0;
 		return *this;
 	}
-	bool operator !()
+	bool operator !() const
 	{
 		return !(Viable());
 	}
-	operator bool()
+	operator bool() const
 	{
 		return Viable();
 	}
@@ -502,7 +714,7 @@ public:
 	{
 		Clear();
 	}
-	bool Viable()
+	bool Viable() const
 	{
 		return (m_ptr != 0);
 	}
@@ -538,11 +750,11 @@ public:
 
 		return *this;
 	}
-	bool operator !()
+	bool operator !() const
 	{
 		return !(Viable());
 	}
-	operator bool()
+	operator bool() const
 	{
 		return Viable();
 	}

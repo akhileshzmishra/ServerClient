@@ -19,4 +19,14 @@
 typedef XLAutoPtr::XLSharedArraySmPtr<char> CHARSTORAGE;
 
 
+
+enum XLEventQueueConfig
+{
+   XLEventQueueConfig_MaxSize = 256,
+   XLEventQueueMaxm_pDataSize = 128
+};
+
+
+
+
 #endif

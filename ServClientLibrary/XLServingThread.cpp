@@ -129,7 +129,7 @@ void XLServingThread::t_OnEvent(const XLThreadEvent* e)
 	case ACCEPT_INCOMING:
 		if(m_pSocket)
 		{
-			XLThreadEvent::CHARSTORAGE s = e->ConvertIntoCharBuffer();
+			CHARSTORAGE s = e->ConvertIntoCharBuffer();
 			BASE_SOCKET_PTR id;
 			if(m_IncomingQueue.pop(id))
 			{
@@ -144,7 +144,7 @@ void XLServingThread::t_OnEvent(const XLThreadEvent* e)
 	case LIFE_BEAT:
 		if(m_pSocket)
 		{
-			XLThreadEvent::CHARSTORAGE s = e->ConvertIntoCharBuffer();
+			CHARSTORAGE s = e->ConvertIntoCharBuffer();
 			CLITR itr = m_ClientIDs.begin();
 			while(itr != m_ClientIDs.end())
 			{
@@ -157,7 +157,7 @@ void XLServingThread::t_OnEvent(const XLThreadEvent* e)
 		break;
 	case USR_MSG_BDCST:
 		{
-			XLThreadEvent::CHARSTORAGE s = e->ConvertIntoCharBuffer();
+			CHARSTORAGE s = e->ConvertIntoCharBuffer();
 			CLITR itr = m_ClientIDs.begin();
 			while(itr != m_ClientIDs.end())
 			{
@@ -173,7 +173,7 @@ void XLServingThread::t_OnEvent(const XLThreadEvent* e)
 		break;
 	case USR_MSG:
 		{
-			XLThreadEvent::CHARSTORAGE s = e->ConvertIntoCharBuffer();
+			CHARSTORAGE s = e->ConvertIntoCharBuffer();
 			XLBaseSocket* id = 0;
 			if(e->Read(0, id))
 			{
