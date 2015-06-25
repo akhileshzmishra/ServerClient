@@ -49,7 +49,7 @@ void GenThreadPool::XLThWorkThread::RunProgram()
 				return;
 			}
 			ThreadPoolJob* job = 0;
-			(e.CopyData((char*)(&job), sizeof(job)));
+			e.CopyData((char*)(&job), sizeof(job));
 			{
 				if(job)
 				{
@@ -117,20 +117,15 @@ void GenThreadPool::XLThreadPool::AddJob(ThreadPoolJob* job)
 		XLThreadEvent e;
 		e.SetType(GenThreadPool::ThreadPoolEvent_Add);
 		e.AddData((char*)(job), sizeof(ThreadPoolJob*));
-		if(m_bDynamic)
+		if(m_bDynamic && (m_ThreadList.size() < m_iNumMaxThread))
 		{
-			int count = 0;
-			for(int i = 0; i < m_ThreadList.size(); i++)
-			{
-				if(m_ThreadList[i]->IsEngaged())
-				{
-					count++;
-				}
-			}
+			m_Protection.Lock();
+			int count = m_ThreadList.size();			
 			if(count < m_iNumMaxThread)
 			{
 				m_ThreadList.push_back(new XLThWorkThread());
 			}
+			m_Protection.Unlock();
 		}
 
 		m_JobQueue->Put(&e);
@@ -173,13 +168,13 @@ bool GenThreadPool::XLThreadPool::GetEvent(XLThreadEvent* e)
 {
 	if(GenThreadPool::XLThreadPool::IsCreated())
 	{
-		m_Protection.Lock();
+		//m_Protection.Lock();
 		if(m_JobQueue->Get(e))
 		{
-			m_Protection.Unlock();
+			//m_Protection.Unlock();
 			return true;
 		}
-		m_Protection.Unlock();
+		//m_Protection.Unlock();
 		return false;
 	}
 }

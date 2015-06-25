@@ -86,7 +86,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy $(SolutionDir)/ServerClientLibrary/openssl/libeay32.dll  $(SolutionDir)/Debug/.&#x0D;&#x0A;copy $(SolutionDir)/ServerClientLibrary/openssl/ssleay32.dll  $(SolutionDir)/Debug/.&#x0D;&#x0A;"
+				CommandLine="copy  /Y &quot;$(OutDir)\..\ServClientLibrary\openssl\bin\libeay32.dll&quot;  &quot;$(OutDir)\libeay32.dll&quot;&#x0D;&#x0A;copy  /Y &quot;$(OutDir)\..\ServClientLibrary\openssl\bin\ssleay32.dll&quot;  &quot;$(OutDir)\ssleay32.dll&quot;&#x0D;&#x0A;"
 			/>
 		</Configuration>
 		<Configuration

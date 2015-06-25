@@ -78,7 +78,6 @@ public:
 	XLThreadPool(int maxThread = XLThreadPool::DefaultMaxThread , bool Dynamic = false);
 	virtual ~XLThreadPool(void);
 
-public:
 	bool Create();
 	void Destroy();
 	void AddJob(ThreadPoolJob* job);
