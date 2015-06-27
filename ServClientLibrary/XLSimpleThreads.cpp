@@ -20,12 +20,12 @@ XLSimpleThreads::~XLSimpleThreads(void)
 bool XLSimpleThreads::Create(const char *threadname, unsigned long stackSize)
 {
 	mName = threadname;
-	m_Sync1.Create(1,1);
+	m_Sync1.Create(0,1);
 	if(!m_Sync1.IsCreated())
 	{
 		return false;
 	}
-	m_Sync2.Create(1,1);
+	m_Sync2.Create(0,1);
 	if(!m_Sync2.IsCreated())
 	{
 		m_Sync1.Destroy();

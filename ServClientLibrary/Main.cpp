@@ -4,19 +4,59 @@
 #include "XLServer.h"
 #include "XLClient.h"
 #include "XLAutoPtr.h"
+#include "XLThreadPool.h"
 using namespace std;
 using namespace XLServerClientModel;
+using namespace GenThreadPool;
 
-#if 0
+#if 1
+class JobW : public ThreadPoolJob
+{
+	int i;
+public:
+	JobW(int x): i(x){}
+	void Work()
+	{
+		for(int k = 0; k < 1; k++)
+		{
+			cout<<"Job "<<i<<endl;
+			::Sleep(1000);
+		}
+	}
+
+};
+
+
 int main()
 {
-	typedef XLAutoPtr::XLSharedSmPtr<int> SM;
-	SM a = new int (10);
-	SM b = a;
-	SM c;
-	c = b;
-	c = new int (15);
-	return 0;
+	const int numThreads = 5;
+	const int numJobs = 10;
+
+	XLThreadPool pool(numThreads, false);
+	pool.Create();
+	cout<<"Pool created"<<endl;
+
+	std::vector<JobW*> jobVec;
+	
+	for(int i = 0; i < numJobs; i++)
+	{
+		jobVec.push_back(new JobW(i));
+	}
+	for(int i = 0; i < jobVec.size(); i++)
+	{
+		pool.AddJob(jobVec[i]);
+	}
+
+	/*while(1)
+	{
+		for(int i = 0; i < jobVec.size(); i++)
+		{
+			pool.AddJob(jobVec[i]);
+		}
+		::Sleep(1000);
+	}*/
+	pool.Destroy();
+	cout<<"Pool destroyed"<<endl;
 }
 #else
 

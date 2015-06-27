@@ -58,6 +58,11 @@ public:
 		return false;
 	}
 
+	int size()
+	{
+		return (int)mQ.size();
+	}
+
 };
 
 }; //XDS
