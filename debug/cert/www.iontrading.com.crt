@@ -1,0 +1,66 @@
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number: 2 (0x2)
+    Signature Algorithm: sha1WithRSAEncryption
+        Issuer: C=IN, ST=up, L=noida, O=ion, CN=akhilesh/emailAddress=akhilesh.mishra@iontrading.com
+        Validity
+            Not Before: Dec 19 09:39:37 2014 GMT
+            Not After : Dec 19 09:39:37 2015 GMT
+        Subject: C=IN, ST=up, O=ion, CN=akhilesh/emailAddress=akhilesh.mishra@iontrading.com
+        Subject Public Key Info:
+            Public Key Algorithm: rsaEncryption
+                Public-Key: (1024 bit)
+                Modulus:
+                    00:c8:c9:3e:bc:23:d1:64:4d:67:0f:bb:ca:80:40:
+                    8a:d4:30:22:c5:35:d5:21:a5:ee:e1:60:95:e1:df:
+                    5e:4f:1c:15:21:aa:7a:fb:4e:1f:5b:45:70:17:85:
+                    50:46:5b:3a:68:49:b2:97:64:c1:5a:af:7e:41:9b:
+                    2a:b0:14:08:90:67:e3:c4:18:ae:3a:a0:61:ad:3e:
+                    69:2e:10:1f:2f:c0:58:df:be:a1:f7:09:a4:12:fe:
+                    5f:54:28:7e:ea:2c:47:46:dd:6f:2d:66:b5:34:07:
+                    7a:15:60:0b:84:81:12:cb:be:9f:a6:14:7c:38:81:
+                    26:63:4b:26:9c:65:86:c7:4f
+                Exponent: 65537 (0x10001)
+        X509v3 extensions:
+            X509v3 Basic Constraints: 
+                CA:FALSE
+            X509v3 Subject Key Identifier: 
+                98:77:04:97:DA:B1:71:E2:5F:DC:86:ED:56:7F:E3:EA:6B:A2:3D:4A
+            X509v3 Authority Key Identifier: 
+                keyid:6F:3F:FB:83:2F:58:EC:F8:B5:DB:44:F6:9E:6A:A5:80:3F:C3:BB:F5
+                DirName:/C=IN/ST=up/L=noida/O=ion/CN=akhilesh/emailAddress=akhilesh.mishra@iontrading.com
+                serial:AE:55:9F:E9:22:B0:01:F7
+
+            Netscape CA Revocation Url: 
+                https://www.example.com/example-ca-crl.pem
+    Signature Algorithm: sha1WithRSAEncryption
+         5e:59:31:22:43:39:be:fa:32:6f:0e:6e:1a:39:e6:23:3d:d3:
+         d5:11:25:2a:55:40:f4:4a:66:56:8a:22:f7:a3:8d:c2:58:da:
+         40:0f:9a:ab:6e:0e:b1:1b:f2:04:82:f9:0c:3a:f2:de:68:ca:
+         74:ae:11:d3:31:17:1f:03:d1:c0:7b:52:7a:00:03:2f:11:30:
+         fb:8b:81:66:ad:40:bd:9d:80:1b:6a:5c:06:9d:8f:4d:35:9f:
+         a4:a1:e2:b0:4a:e4:24:06:fe:a1:31:05:f5:c3:79:be:83:14:
+         7a:6a:78:b8:05:57:06:eb:55:a8:ae:a1:e0:9c:f8:62:8c:6a:
+         8e:ca
+-----BEGIN CERTIFICATE-----
+MIIDdDCCAt2gAwIBAgIBAjANBgkqhkiG9w0BAQUFADB6MQswCQYDVQQGEwJJTjEL
+MAkGA1UECAwCdXAxDjAMBgNVBAcMBW5vaWRhMQwwCgYDVQQKDANpb24xETAPBgNV
+BAMMCGFraGlsZXNoMS0wKwYJKoZIhvcNAQkBFh5ha2hpbGVzaC5taXNocmFAaW9u
+dHJhZGluZy5jb20wHhcNMTQxMjE5MDkzOTM3WhcNMTUxMjE5MDkzOTM3WjBqMQsw
+CQYDVQQGEwJJTjELMAkGA1UECAwCdXAxDDAKBgNVBAoMA2lvbjERMA8GA1UEAwwI
+YWtoaWxlc2gxLTArBgkqhkiG9w0BCQEWHmFraGlsZXNoLm1pc2hyYUBpb250cmFk
+aW5nLmNvbTCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEAyMk+vCPRZE1nD7vK
+gECK1DAixTXVIaXu4WCV4d9eTxwVIap6+04fW0VwF4VQRls6aEmyl2TBWq9+QZsq
+sBQIkGfjxBiuOqBhrT5pLhAfL8BY376h9wmkEv5fVCh+6ixHRt1vLWa1NAd6FWAL
+hIESy76fphR8OIEmY0smnGWGx08CAwEAAaOCARgwggEUMAkGA1UdEwQCMAAwHQYD
+VR0OBBYEFJh3BJfasXHiX9yG7VZ/4+proj1KMIGsBgNVHSMEgaQwgaGAFG8/+4Mv
+WOz4tdtE9p5qpYA/w7v1oX6kfDB6MQswCQYDVQQGEwJJTjELMAkGA1UECAwCdXAx
+DjAMBgNVBAcMBW5vaWRhMQwwCgYDVQQKDANpb24xETAPBgNVBAMMCGFraGlsZXNo
+MS0wKwYJKoZIhvcNAQkBFh5ha2hpbGVzaC5taXNocmFAaW9udHJhZGluZy5jb22C
+CQCuVZ/pIrAB9zA5BglghkgBhvhCAQQELBYqaHR0cHM6Ly93d3cuZXhhbXBsZS5j
+b20vZXhhbXBsZS1jYS1jcmwucGVtMA0GCSqGSIb3DQEBBQUAA4GBAF5ZMSJDOb76
+Mm8Obho55iM909URJSpVQPRKZlaKIvejjcJY2kAPmqtuDrEb8gSC+Qw68t5oynSu
+EdMxFx8D0cB7UnoAAy8RMPuLgWatQL2dgBtqXAadj001n6Sh4rBK5CQG/qExBfXD
+eb6DFHpqeLgFVwbrVaiuoeCc+GKMao7K
+-----END CERTIFICATE-----
