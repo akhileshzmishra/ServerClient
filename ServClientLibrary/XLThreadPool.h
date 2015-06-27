@@ -62,7 +62,7 @@ class XLThreadPool: public XLWorkThEventAllocator
 	int                                                m_iNumMaxThread;
 	int                                                m_iCurrWorkLoad;
 	JobThreadList                                      m_ThreadList;
-	XLMutex                                            m_Protection;
+	XLMutex                                            m_ThCountGate;
 	EventQPtr                                          m_JobQueue;
 	bool                                               m_bCreated;
 	static const int                                   DefaultMaxThread = 5;

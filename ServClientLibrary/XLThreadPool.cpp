@@ -1,5 +1,5 @@
 #include "XLThreadPool.h"
-
+#include <iostream>
 
 
 GenThreadPool::XLThWorkThread::XLThWorkThread():
@@ -41,15 +41,16 @@ void GenThreadPool::XLThWorkThread::RunProgram()
 	if(XLSimpleThreads::IsCreated())
 	{
 		XLThreadEvent e;
-		if(m_Allocator->GetEvent(&e))
+		while(m_Allocator->GetEvent(&e))
 		{
 			m_bWorking = true;
+			//std::cout<<"Running worker thread"<<std::endl;
 			if(e.GetType() == ThreadPoolEvent_Exit)
 			{
 				return;
 			}
 			ThreadPoolJob* job = 0;
-			e.CopyData((char*)(&job), sizeof(job));
+			if(e.Read(0, job))
 			{
 				if(job)
 				{
@@ -85,11 +86,11 @@ bool GenThreadPool::XLThreadPool::Create()
 		m_JobQueue = new XLEventQueue();
 		if(m_JobQueue)
 		{
-			if(!m_JobQueue->Create())
+			if(!m_JobQueue->Create(XLEventQueue::MultiReader | XLEventQueue::MultiWriter))
 			{
 				return false;
 			}
-			if(!m_Protection.Create())
+			if(!m_ThCountGate.Create())
 			{
 				m_JobQueue->Destroy();
 				return false;
@@ -99,7 +100,9 @@ bool GenThreadPool::XLThreadPool::Create()
 			{
 				for(int i = 0; i < m_iNumMaxThread; i++)
 				{
-					m_ThreadList[i]->Create(this);
+					JobThread wThread = new XLThWorkThread();
+					m_ThreadList.push_back(wThread);
+					wThread->Create(this);
 				}
 				m_iCurrWorkLoad = m_iNumMaxThread;
 			}
@@ -116,18 +119,22 @@ void GenThreadPool::XLThreadPool::AddJob(ThreadPoolJob* job)
 	{
 		XLThreadEvent e;
 		e.SetType(GenThreadPool::ThreadPoolEvent_Add);
-		e.AddData((char*)(job), sizeof(ThreadPoolJob*));
+		e.Write(0, job);
 		if(m_bDynamic && (m_ThreadList.size() < m_iNumMaxThread))
 		{
-			m_Protection.Lock();
+			m_ThCountGate.Lock();
 			int count = m_ThreadList.size();			
 			if(count < m_iNumMaxThread)
 			{
-				m_ThreadList.push_back(new XLThWorkThread());
+				JobThread jThread = new XLThWorkThread();
+				m_ThreadList.push_back(jThread);
+				jThread->Create(this);
 			}
-			m_Protection.Unlock();
+			m_ThCountGate.Unlock();
 		}
 
+		//std::cout<<"Adding job "<<std::endl;
+		//e.Print();
 		m_JobQueue->Put(&e);
 	}
 }
@@ -138,11 +145,12 @@ void GenThreadPool::XLThreadPool::Destroy()
 	if(GenThreadPool::XLThreadPool::IsCreated())
 	{
 		DestroyAllJobThreads();
+		//DestroyAllJobThreads();
 		for(int i = 0; i < m_ThreadList.size(); i++)
 		{
 			m_ThreadList[i]->Destroy();
 		}
-		m_Protection.Destroy();	
+		m_ThCountGate.Destroy();	
 		m_JobQueue->Destroy();
 		m_bCreated = false;
 	}
@@ -168,13 +176,13 @@ bool GenThreadPool::XLThreadPool::GetEvent(XLThreadEvent* e)
 {
 	if(GenThreadPool::XLThreadPool::IsCreated())
 	{
-		//m_Protection.Lock();
+		//m_ThCountGate.Lock();
 		if(m_JobQueue->Get(e))
 		{
-			//m_Protection.Unlock();
+			//m_ThCountGate.Unlock();
 			return true;
 		}
-		//m_Protection.Unlock();
+		//m_ThCountGate.Unlock();
 		return false;
 	}
 }
