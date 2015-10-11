@@ -1,6 +1,7 @@
 #ifndef SOCKET_UTILIYY__H_
 #define SOCKET_UTILIYY__H_
 
+#include "SocketDependency.h"
 
 class SocketUtility
 {
@@ -23,9 +24,9 @@ public:
 	};
 	SocketUtility(void);
 
-	static SocketErrCode Send(int socket, const char* msg, int msglen);
-	static SocketErrCode Recieve(int socket, char* msg, int msglen);
-	static SocketErrCode SetSocketTimeout(int socket, int timeoutmill);
+	static SocketErrCode Send(Socket_Identifier socket, const char* msg, int msglen);
+	static SocketErrCode Recieve(Socket_Identifier socket, char* msg, int msglen);
+	static SocketErrCode SetSocketTimeout(Socket_Identifier socket, int timeoutmill);
 
 	static SocketErrCode GetErrorCode(int type);
 

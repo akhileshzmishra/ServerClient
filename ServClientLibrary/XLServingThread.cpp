@@ -80,17 +80,7 @@ void XLServingThread::Stop()
 			delete m_AcceptorThread;
 			m_AcceptorThread = 0;
 		}
-		CLITR itr = m_ClientIDs.begin();
-		while(itr != m_ClientIDs.end())
-		{
-			delete *itr;
-			itr++;
-		}
-		if(m_pSocket)
-		{
-			m_pSocket->Stop();
-			delete m_pSocket;
-		}
+
 		XLEventThread::StopMainLoop();
 	}
 }
@@ -148,7 +138,7 @@ void XLServingThread::t_OnEvent(const XLThreadEvent* e)
 			CLITR itr = m_ClientIDs.begin();
 			while(itr != m_ClientIDs.end())
 			{
-				(*itr)->Send( s, e->WritableSize());
+				(*itr).GetConstData()->Send( s, e->WritableSize());
 				itr++;
 
 			}
@@ -161,7 +151,7 @@ void XLServingThread::t_OnEvent(const XLThreadEvent* e)
 			CLITR itr = m_ClientIDs.begin();
 			while(itr != m_ClientIDs.end())
 			{
-				(*itr)->Send(s, e->WritableSize());
+				(*itr).GetConstData()->Send(s, e->WritableSize());
 				itr++;
 				if(m_Listener)
 				{
@@ -182,7 +172,7 @@ void XLServingThread::t_OnEvent(const XLThreadEvent* e)
 					CLITR itr = m_ClientIDs.find(id);
 					if(itr != m_ClientIDs.end())
 					{
-						(*itr)->Send(s, e->WritableSize());
+						(*itr).GetConstData()->Send(s, e->WritableSize());
 					}
 					if(m_Listener)
 					{

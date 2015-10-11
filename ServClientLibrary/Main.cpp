@@ -5,6 +5,7 @@
 #include "XLClient.h"
 #include "XLAutoPtr.h"
 #include "XLThreadPool.h"
+#include "XLThreadUtility.h"
 using namespace std;
 using namespace XLServerClientModel;
 using namespace GenThreadPool;
@@ -20,7 +21,7 @@ public:
 		for(int k = 0; k < 1; k++)
 		{
 			cout<<"Job "<<i<<endl;
-			::Sleep(1000);
+			XLThreadUtility::Sleep(3000);
 		}
 	}
 
@@ -29,7 +30,7 @@ public:
 
 int main()
 {
-	const int numThreads = 5;
+	const int numThreads = 2;
 	const int numJobs = 10;
 
 	XLThreadPool pool(numThreads, false);
@@ -47,14 +48,17 @@ int main()
 		pool.AddJob(jobVec[i]);
 	}
 
-	/*while(1)
+	//while(1)
 	{
 		for(int i = 0; i < jobVec.size(); i++)
 		{
 			pool.AddJob(jobVec[i]);
 		}
-		::Sleep(1000);
-	}*/
+		//XLThreadUtility::Sleep(2000);
+		//sleep(1);
+	}
+	//while(1);
+	//XLThreadUtility::Sleep(12000);
 	pool.Destroy();
 	cout<<"Pool destroyed"<<endl;
 }
@@ -66,7 +70,7 @@ int main(int argv, char** argc)
 	
 	SocketConfig config("127.0.0.1");
 	config.SetPortNumber(8000);
-	bool UseSSL = true;
+	bool UseSSL = false;
 	std::string Certi = "cert/www.iontrading.com.crt";
 	std::string pkey = "cert/www.iontrading.com.pem";
 	std::string CA = "cert/root.pem";
@@ -97,7 +101,7 @@ int main(int argv, char** argc)
 					while(true)
 					{
 						server.Broadcast("TOM & JERRY", sizeof("TOM & JERRY"));
-						::Sleep(2000);
+						XLThreadUtility::Sleep(2000);
 					}
 					server.Stop();
 				}

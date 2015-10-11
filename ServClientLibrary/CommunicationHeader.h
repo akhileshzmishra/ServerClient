@@ -2,9 +2,12 @@
 #define _COMMUNICATION_HEADER_H_
 
 
-#ifndef _WINDOWS_
-//#define _WINDOWS_
-#endif
+
+#include <stdio.h>
+#include <stdlib.h>
+
+
+
 
 
 #define MAX_MESS_LENGTH 50

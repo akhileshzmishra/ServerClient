@@ -18,12 +18,14 @@ class XLBaseSocket;
 class XLSocketListener
 {
 public:
-	virtual void OnConnect(){}
-	virtual void OnDisConnect(){}
-	virtual void OnListen(){}
-	virtual void OnAccept(BASE_SOCKET_PTR clientSock){}
-	virtual void OnSend(const char* msg, int size){}
-	virtual void OnRecieve(char* msg, int size){}
+	XLSocketListener()                                  {}
+	virtual ~XLSocketListener()                         {}
+	virtual void OnConnect()                            {}
+	virtual void OnDisConnect()                         {}
+	virtual void OnListen()                             {}
+	virtual void OnAccept(BASE_SOCKET_PTR clientSock)   {}
+	virtual void OnSend(const char* msg, int size)      {}
+	virtual void OnRecieve(char* msg, int size)         {}
 };
 
 

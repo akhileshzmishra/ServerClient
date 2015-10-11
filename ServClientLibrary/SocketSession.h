@@ -2,10 +2,8 @@
 #define _SOCKSESSION_H_
 #include "XLAutoPtr.h"
 #include <vector>
-#include "bio.h"
-#include <windows.h>
-#include <windowsx.h>
-#include <winsock.h>
+#include <string>
+#include "SocketDependency.h"
 
 
 class SocketSession
@@ -39,7 +37,9 @@ private:
 
 class OpenSSLSession: public SocketSession
 {
-	SSL_CTX*               m_ConnectionCtx; 
+#ifdef _OPENSSL_ACTIVE_
+	SSL_CTX*               m_ConnectionCtx;
+#endif
 	std::string            m_SARACertificate;
 	std::string            m_SARAPvtKeyFile;
 	std::string            m_TrustedCACertificate;
@@ -57,8 +57,10 @@ public:
 	void Start();
 	void Stop();
 
-
+#ifdef _OPENSSL_ACTIVE_
 	SSL_CTX* GetContext()                           {return m_ConnectionCtx;}
+#endif
+
 	bool CanPeerCertify()                           {return m_b2ndTypeRemoteVerification;}
 	void SetDepth(int d)                            {m_iDepth = (d > 0 ? d : 1);}
 	int GetDepth()                                  {return m_iDepth;}
@@ -70,7 +72,9 @@ public:
 	void SetRemoteCertification(bool set)           {m_bRemoteVerification = set;}
 	void SetCipherList(std::string& clist)          {m_CipherList = clist;}
 private:
+#ifdef _OPENSSL_ACTIVE_
 	static int SSL_VerifyCallback(int preverify_ok, X509_STORE_CTX *x509_ctx);
+#endif
 	static int GetPassword_CB(char *out, int num, int rwflag, void *userdata);
 
 	std::string GetAuthPassword()                   {return m_AuthPassword;}

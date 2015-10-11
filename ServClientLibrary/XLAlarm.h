@@ -27,7 +27,7 @@ class XLAlarm :	private XLSimpleThreads
 	AlarmData*                           m_pData;
 
 public:
-	XLAlarm(AlarmListener* listener = 0, int numberOfTimes = -1);
+	XLAlarm(AlarmListener* listener = 0, unsigned int numberOfTimes = (unsigned int )(-1));
 	~XLAlarm(void);
 
 	void SetAlarm(int millisec);

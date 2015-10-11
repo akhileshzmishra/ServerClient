@@ -1,7 +1,5 @@
 #include "XLBaseSocket.h"
-#include <windows.h>
-#include <windowsx.h>
-#include <winsock.h>
+#include "SocketDependency.h"
 #include <vector>
 #include <set>
 #include <memory.h>
@@ -140,7 +138,7 @@ std::string SocketConfig::GetHostWithPort()
 	memset(buff, 0 , 100);
 
 
-	str += itoa(GetPortNumber(), buff, 10);
+	str += std::to_string(GetPortNumber());
 	return str;
 }
 

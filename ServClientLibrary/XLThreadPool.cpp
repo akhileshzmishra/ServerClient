@@ -101,8 +101,12 @@ bool GenThreadPool::XLThreadPool::Create()
 				for(int i = 0; i < m_iNumMaxThread; i++)
 				{
 					JobThread wThread = new XLThWorkThread();
-					m_ThreadList.push_back(wThread);
-					wThread->Create(this);
+					if(wThread)
+					{
+						wThread->Create(this);
+						m_ThreadList.push_back(wThread);
+					}
+
 				}
 				m_iCurrWorkLoad = m_iNumMaxThread;
 			}
@@ -185,4 +189,5 @@ bool GenThreadPool::XLThreadPool::GetEvent(XLThreadEvent* e)
 		//m_ThCountGate.Unlock();
 		return false;
 	}
+	return false;
 }

@@ -1,14 +1,15 @@
 //#include "StdAfx.h"
-#include "Windows.h"
-#include "XLSimpleThreads.h"
 
-static DWORD WINAPI RunSimpleThread(LPVOID data);
+#include "XLSimpleThreads.h"
+#include "XLThreadDependency.h"
+#include <iostream>
+
+THFUN_RETVAL OTHER_EXPANSION RunSimpleThread(LPVOID data);
 
 XLSimpleThreads::XLSimpleThreads(void):
 m_Sync1(),
 m_Sync2(),
 m_handle(0),
-mID(0),
 mThreadID(0)
 {
 }
@@ -31,7 +32,21 @@ bool XLSimpleThreads::Create(const char *threadname, unsigned long stackSize)
 		m_Sync1.Destroy();
 		return false;
 	}
+#ifdef __WINDOWS_OS_
 	m_handle = (int)CreateThread(NULL, (unsigned int)stackSize, RunSimpleThread, (LPVOID)this, 0, (DWORD*)&mID); 
+#else
+
+	pthread_attr_t attr;
+	pthread_attr_init(&attr);
+	//pthread_attr_setstack(&attr, stackSize);
+    int retVal = pthread_create(&m_handle, 0, RunSimpleThread, this);
+    if(retVal != 0)
+    {
+    	std::cout<<"Error in Creating PThread"<<std::endl;
+    }
+	pthread_attr_destroy(&attr);
+
+#endif
 	m_Sync1.Give();
 
 	return true;
@@ -52,12 +67,17 @@ void XLSimpleThreads::Destroy()
 	{
 		m_Sync2.Destroy();
 	}
+#ifdef __WINDOWS_OS_
 	CloseHandle((HANDLE)m_handle);
-	mID = 0;
+#else
+	pthread_kill(m_handle, 0);
+#endif
+	m_handle = 0;
+	mThreadID = 0;
 
 }
 
-DWORD WINAPI RunSimpleThread(LPVOID data)
+THFUN_RETVAL OTHER_EXPANSION RunSimpleThread(LPVOID data)
 {
 	XLSimpleThreads* Thread = (XLSimpleThreads*)data;
 	if(Thread)
@@ -80,15 +100,27 @@ void XLSimpleThreads::Sleep(int millsec)
 {
 	if(IsCreated())
 	{
-		int id = (int)::GetCurrentThreadId();
+		Thread_Identifier id;
+#ifdef __WINDOWS_OS_
+	    id = (int)::GetCurrentThreadId();
+#else
+#endif
 		if(id == mThreadID)
 		{
+#ifdef __WINDOWS_OS_
 			::Sleep(millsec);
+#else
+			sleep((unsigned int)(millsec/1000));
+#endif
 		}
 	}
 }
 
 void XLSimpleThreads::GetThreadID()
 {
+#ifdef __WINDOWS_OS_
 	mThreadID = (int)::GetCurrentThreadId();
+#else
+	mThreadID = pthread_self();
+#endif
 }

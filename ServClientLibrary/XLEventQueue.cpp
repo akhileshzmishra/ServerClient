@@ -1,6 +1,6 @@
 #include "XLEventQueue.h"
 #include <iostream>
-#include "Windows.h"
+#include "XLThreadDependency.h"
 using namespace std;
 
 

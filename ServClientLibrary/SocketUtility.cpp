@@ -1,10 +1,11 @@
 #include "SocketUtility.h"
-#include <windows.h>
-//#include <windowsx.h>
-#include <winsock.h>
+#include "SocketDependency.h"
 #include <iostream>
 using namespace std;
+
+#ifdef __WINDOWS_OS_
 #pragma comment(lib,"Ws2_32.lib") 
+#endif
 
 SocketUtility::SocketUtility(void)
 {
@@ -15,15 +16,19 @@ SocketUtility::~SocketUtility(void)
 }
 
 
-SocketUtility::SocketErrCode SocketUtility::Send(int socket, const char* msg, int msglen)
+SocketUtility::SocketErrCode SocketUtility::Send(Socket_Identifier socket, const char* msg, int msglen)
 {
 	SocketUtility::SocketErrCode error = SocketNoError;
-	int numbytes = send((SOCKET)socket, msg, msglen, 0);
+	int numbytes = send(socket, msg, msglen, 0);
 	cout<<__FUNCTION__<<" "<<numbytes<<endl;
 	if(numbytes == SOCKET_ERROR)
 	{
 		cout<<"SOCKET ERROR"<<endl;
+#ifdef __WINDOWS_OS_
 		int type = WSAGetLastError();
+#else
+		int type = 0;
+#endif
 		cout<<type<<endl;
 		error = GetErrorCode(type);
 	}
@@ -31,16 +36,20 @@ SocketUtility::SocketErrCode SocketUtility::Send(int socket, const char* msg, in
 
 	return error;
 }
-SocketUtility::SocketErrCode SocketUtility::Recieve(int socket, char* msg, int msglen)
+SocketUtility::SocketErrCode SocketUtility::Recieve(Socket_Identifier socket, char* msg, int msglen)
 {
 	SocketUtility::SocketErrCode error = SocketNoError;
-	int numbytes = recv((SOCKET)(socket), msg, msglen, 0);
+	int numbytes = recv((socket), msg, msglen, 0);
 
 	cout<<__FUNCTION__<<" "<<numbytes<<endl;
 	if(numbytes == SOCKET_ERROR)
 	{
 		cout<<"SOCKET ERROR"<<endl;
+#ifdef __WINDOWS_OS_
 		int type = WSAGetLastError();
+#else
+		int type = 0;
+#endif
 		cout<<type<<endl;
 		error = GetErrorCode(type);
 	}
@@ -48,10 +57,10 @@ SocketUtility::SocketErrCode SocketUtility::Recieve(int socket, char* msg, int m
 	return error;
 }
 
-SocketUtility::SocketErrCode SocketUtility::SetSocketTimeout(int socket, int timeoutmill)
+SocketUtility::SocketErrCode SocketUtility::SetSocketTimeout(Socket_Identifier socket, int timeoutmill)
 {
 	SocketUtility::SocketErrCode error = SocketNoError;
-	setsockopt((SOCKET)socket, SOL_SOCKET, SO_KEEPALIVE, (const char*) (&timeoutmill), sizeof(int));
+	setsockopt(socket, SOL_SOCKET, SO_KEEPALIVE, (const char*) (&timeoutmill), sizeof(int));
 
 	return error;
 }
@@ -59,7 +68,7 @@ SocketUtility::SocketErrCode SocketUtility::SetSocketTimeout(int socket, int tim
 SocketUtility::SocketErrCode SocketUtility::GetErrorCode(int type)
 {
 	SocketUtility::SocketErrCode code = SocketNoError;
-#ifdef _WINDOWS_
+#ifdef __WINDOWS_OS_
 	switch(type)
 	{
 		/* socket invalid */

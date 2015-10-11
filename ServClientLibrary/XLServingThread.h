@@ -12,6 +12,8 @@
 class ServingThreadListener
 {
 public:
+	ServingThreadListener()                        {}
+	virtual ~ServingThreadListener()               {}
 	virtual void OnStart(class XLServingThread* ) = 0;
 	virtual void OnEnd(class XLServingThread* ) = 0;
 	virtual void OnAccept(class XLServingThread*, BASE_SOCKET_PTR) = 0;

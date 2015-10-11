@@ -70,22 +70,22 @@ void XLServer::Stop()
 	GetSettingLibrary()->StopSocketLibrary();
 }
 
-int XLServer::StartAService(SocketConfig& coinfig)
+long long int XLServer::StartAService(SocketConfig& coinfig)
 {
 	XLServingThread* t = new XLServingThread(coinfig,  "HANDLER_TH");
 	t->SetListener(this);
 	
 	XLCService* newService = new XLCService(t);
-	m_ClientServices.insert(SERVTPAIR((int)t, newService));
+	m_ClientServices.insert(SERVTPAIR((XLComPtr)t, newService));
 	t->Start();
 	newService->GetGate().Take();
 
-	return (int) t;
+	return (long long int) t;
 }
 
-void XLServer::StopAService(int id)
+void XLServer::StopAService(long long int id)
 {
-	SERVTITR itr = m_ClientServices.find(id);
+	SERVTITR itr = m_ClientServices.find((XLComPtr)id);
 	if(itr != m_ClientServices.end())
 	{
 		itr->second->GetService()->Stop();
@@ -95,9 +95,9 @@ void XLServer::StopAService(int id)
 	
 }
 
-void XLServer::Broadcast(const char* msg, int msglen, int serviceID)
+void XLServer::Broadcast(const char* msg, int msglen, long long int serviceID)
 {
-	SERVTITR itr = m_ClientServices.find(serviceID);
+	SERVTITR itr = m_ClientServices.find((XLComPtr)serviceID);
 	if(itr != m_ClientServices.end())
 	{
 		itr->second->GetService()->Broadcast(msg, msglen);

@@ -49,6 +49,7 @@ XLBaseSocket* XLSocketFactory::GetSocket(SocketType type, SocketConfig& config, 
 			socket = new XLSocket(config, IsServerMode);
 		}
 		break;
+#ifdef _OPENSSL_ACTIVE_
 	case SST_OpenSSL:
 		{
 			GetWinsockSession();
@@ -56,6 +57,7 @@ XLBaseSocket* XLSocketFactory::GetSocket(SocketType type, SocketConfig& config, 
 			socket = new XLSSLSocket(config, IsServerMode);
 		}
 		break;
+#endif
 	default:
 		break;
 	}

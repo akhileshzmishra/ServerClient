@@ -1,9 +1,9 @@
 #include "XLAlarm.h"
 
-XLAlarm::XLAlarm(AlarmListener* listener, int numberOfTimes):
+XLAlarm::XLAlarm(AlarmListener* listener, unsigned int numberOfTimes):
 m_Listener(listener),
 m_iMillSec(0),
-m_iRepeatCount(unsigned int(numberOfTimes)),
+m_iRepeatCount(numberOfTimes),
 m_bExit(false),
 m_pData(0)
 {

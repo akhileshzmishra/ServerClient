@@ -1,14 +1,15 @@
+
+#include "SocketDependency.h"
 #include "XLSocket.h"
-#include <windows.h>
-//#include <windowsx.h>
-#include <winsock.h>
 #include "SocketUtility.h"
 #include <iostream>
 #include "CommunicationHeader.h"
 #include "SocketSession.h"
 using namespace std;
 
+#ifdef __WINDOWS_OS_
 #pragma comment(lib,"Ws2_32.lib") 
+#endif
 
 
 
@@ -23,7 +24,7 @@ m_ListenSocket(INVALID_SOCKET)
 	m_Session = GetWinsockSession();
 }
 
-XLSocket::XLSocket(int sock):
+XLSocket::XLSocket(Socket_Identifier sock):
 XLBaseSocket(),
 m_ListenSocket(sock)
 {
@@ -54,10 +55,9 @@ int XLSocket::TryConnect()
     {
         return RESULT_NO_SOCKET;
     }
-
     target.sin_family = m_Config.GetIPFormat();           // address family Internet
-    target.sin_port = htons (m_Config.GetPortNumber());        // set server’s port number
-    //target.sin_addr.s_addr = m_Config.HostNumber;  // set server’s IP
+    target.sin_port = htons (m_Config.GetPortNumber());        // set serverï¿½s port number
+    //target.sin_addr.s_addr = m_Config.HostNumber;  // set serverï¿½s IP
 	target.sin_addr.s_addr = inet_addr(m_Config.GetHostNumber());
      
     //Try connecting...
@@ -88,7 +88,9 @@ int XLSocket::ListenOnPort()
     
     if (m_ListenSocket == INVALID_SOCKET)
     {
+#ifdef _WINDOWS_OS_
 		WSACleanup();
+#endif
         return RESULT_NO_SOCKET;
     }
     
@@ -96,18 +98,22 @@ int XLSocket::ListenOnPort()
 	memset(&addr, 0, sizeof(SOCKADDR_IN));
    
     addr.sin_family = m_Config.GetIPFormat();           // address family Internet
-    addr.sin_port = htons (m_Config.GetPortNumber());        // set server’s port number
-    //target.sin_addr.s_addr = m_Config.HostNumber;  // set server’s IP
+    addr.sin_port = htons (m_Config.GetPortNumber());        // set serverï¿½s port number
+    //target.sin_addr.s_addr = m_Config.HostNumber;  // set serverï¿½s IP
 	addr.sin_addr.s_addr = inet_addr(m_Config.GetHostNumber());
 
     int retryCount = 0;
-    while(bind(m_ListenSocket, (LPSOCKADDR)&addr, sizeof(addr)) == SOCKET_ERROR) //Try binding
+    while(bind(m_ListenSocket, (struct sockaddr*)&addr, sizeof(addr)) == SOCKET_ERROR) //Try binding
     { 
 		// error
 		retryCount++;
 		if(retryCount < m_Config.GetConnectionTries())
 		{
+#ifdef __WINDOWS_OS_
 			::Sleep(BIND_SLEEP);
+#else
+			sleep(BIND_SLEEP/1000);
+#endif
 			continue;
 		}
         return RESULT_NO_BIND;
@@ -127,8 +133,12 @@ int XLSocket::ListenOnPort()
 
 void XLSocket::OnCleanUp()
 {
+#ifdef __WINDOWS_OS_
 	closesocket(m_ListenSocket);
 	WSACleanup();
+#else
+	close(m_ListenSocket);
+#endif
 	m_bActive = false;
 }
 
@@ -172,11 +182,18 @@ bool XLSocket::AcceptConnection()
 		return false;
 	}
 
+
+#ifdef __WINDOWS_OS_
 	struct sockaddr_in saClient;
 	int iClientSize = sizeof(saClient);
-	SOCKET AcceptSocket = accept(m_ListenSocket, (SOCKADDR*) &saClient, &iClientSize);
+	Socket_Identifier AcceptSocket = accept(m_ListenSocket, (SOCKADDR*) &saClient, &iClientSize);
+#else
+	struct sockaddr saddr;
+	socklen_t iClientSize = sizeof(saddr);
+	Socket_Identifier AcceptSocket = accept(m_ListenSocket, &saddr, &iClientSize);
+#endif
 
-	int uniqueSockID = (int)AcceptSocket;
+	Socket_Identifier uniqueSockID = AcceptSocket;
 
 	if(m_Config.GetEventListener())
 	{

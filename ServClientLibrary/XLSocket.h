@@ -2,9 +2,7 @@
 #define _XL_SOCKET___
 
 
-#include <windows.h>
-#include <windowsx.h>
-#include <winsock.h>
+#include "SocketDependency.h"
 #include <vector>
 #include <set>
 #include <memory.h>
@@ -14,7 +12,7 @@
 
 class XLSocket: public XLBaseSocket
 {
-	SOCKET                          m_ListenSocket;
+	Socket_Identifier                m_ListenSocket;
 public:
 	enum 
 	{
@@ -39,7 +37,7 @@ public:
 	bool AcceptConnection();
 
 private:
-	XLSocket(int sock);
+	XLSocket(Socket_Identifier sock);
 	int PASCAL TryConnect();
 	int PASCAL ListenOnPort();
 	void OnCleanUp();

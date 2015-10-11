@@ -1,3 +1,5 @@
+#ifdef _OPENSSL_ACTIVE_
+#include "SocketDependency.h"
 #include "XLSSLSocket.h"
 #include "CommunicationHeader.h"
 #include "SocketSession.h"
@@ -31,7 +33,7 @@ m_Socket(INVALID_SOCKET)
 
 }
 
-XLSSLSocket::XLSSLSocket(SOCKET sock, SocketConfig& config):
+XLSSLSocket::XLSSLSocket(Socket_Identifier sock, SocketConfig& config):
 XLBaseSocket(config, true),
 m_ConnectionCtx(0),
 m_pSSLBio(0),
@@ -135,19 +137,27 @@ int XLSSLSocket::StartAsServer()
 		memset(&addr, 0, sizeof(SOCKADDR_IN));
 	   
 		addr.sin_family = m_Config.GetIPFormat();           // address family Internet
-		addr.sin_port = htons (m_Config.GetPortNumber());        // set server’s port number
-		//target.sin_addr.s_addr = m_Config.HostNumber;  // set server’s IP
+		addr.sin_port = htons (m_Config.GetPortNumber());        // set serverï¿½s port number
+		//target.sin_addr.s_addr = m_Config.HostNumber;  // set serverï¿½s IP
 		addr.sin_addr.s_addr = inet_addr(m_Config.GetHostNumber());
 
 		int retryCount = 0;
+#ifdef __WINDOWS_OS_
 		while(bind(m_Socket, (LPSOCKADDR)&addr, sizeof(addr)) == SOCKET_ERROR) //Try binding
+#else
+		//while(bind(m_Socket, (struct sockaddr*)&addr, sizeof(addr)) == SOCKET_ERROR) //Try binding
+#endif
 		{ 
 			// error
 			retryCount++;
 			if(retryCount < m_Config.GetConnectionTries())
 			{
+#ifdef __WINDOWS_OS_
 				::Sleep(BIND_SLEEP);
-				continue;
+#else
+				sleep(BIND_SLEEP/1000);
+#endif
+				//continue;
 			}
 			return RESULT_NO_BIND;
 		}
@@ -190,8 +200,8 @@ int XLSSLSocket::StartAsClient()
 		memset(&target, 0, sizeof(SOCKADDR_IN));
 
 		target.sin_family = m_Config.GetIPFormat();           // address family Internet
-		target.sin_port = htons (m_Config.GetPortNumber());        // set server’s port number
-		//target.sin_addr.s_addr = m_Config.HostNumber;  // set server’s IP
+		target.sin_port = htons (m_Config.GetPortNumber());        // set serverï¿½s port number
+		//target.sin_addr.s_addr = m_Config.HostNumber;  // set serverï¿½s IP
 		target.sin_addr.s_addr = inet_addr(m_Config.GetHostNumber());
 	
 		//Try connecting...
@@ -275,8 +285,12 @@ void XLSSLSocket::Stop()
 
 		if(m_Socket != INVALID_SOCKET)
 		{
+#ifdef __WINDOWS_OS_
 			closesocket(m_Socket);
 			WSACleanup();
+#else
+			close(m_Socket);
+#endif
 			m_Socket = INVALID_SOCKET; 
 		}
 
@@ -393,9 +407,15 @@ bool XLSSLSocket::AcceptConnection()
 			return false;
 		}
 
+#ifdef __WINDOWS_OS_
 		struct sockaddr_in saClient;
-		int iClientSize = sizeof(saClient);
-		SOCKET AcceptSocket = accept(m_Socket, (SOCKADDR*) &saClient, &iClientSize);
+		unsigned int iClientSize = sizeof(saClient);
+		Socket_Identifier AcceptSocket = accept(m_Socket, &saClient, &iClientSize);
+#else
+		struct sockaddr saClient;
+		socklen_t iClientSize = sizeof(saClient);
+		Socket_Identifier AcceptSocket = accept(m_Socket, &saClient, &iClientSize);
+#endif
 
 		int uniqueSockID = (int)AcceptSocket;
 
@@ -532,3 +552,6 @@ bool XLSSLSocket::CertifyPeer()
 	 X509_free (server_cert);
 	 return true;
 }
+
+
+#endif

@@ -12,22 +12,22 @@ class XLCService;
 
 class XLServer: public ServingThreadListener
 {
-	
-	typedef std::map<int, XLCService*>               SERVTLIST;
-	typedef SERVTLIST::iterator                      SERVTITR;
-	typedef std::pair<int, XLCService*>              SERVTPAIR;
-	SERVTLIST                                        m_ClientServices;
-	int                                              m_iMaxServices;
+	typedef void* XLComPtr;
+	typedef std::map<XLComPtr, XLCService*>               SERVTLIST;
+	typedef SERVTLIST::iterator                           SERVTITR;
+	typedef std::pair<XLComPtr, XLCService*>              SERVTPAIR;
+	SERVTLIST                                             m_ClientServices;
+	int                                                   m_iMaxServices;
 public:
 	XLServer(int maxServices = 1);
 	virtual ~XLServer(void);
 
 	void Start();
 	void Stop();
-	int StartAService(SocketConfig& coinfig);
-	void StopAService(int id);
+	long long int StartAService(SocketConfig& coinfig);
+	void StopAService(long long int id);
 
-	void Broadcast(const char* msg, int msglen, int serviceID);
+	void Broadcast(const char* msg, int msglen, long long int serviceID);
 	void Broadcast(const char* msg, int msglen); // to all the services
 
 	LIB_OBJECT GetSettingLibrary();

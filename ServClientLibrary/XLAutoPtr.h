@@ -278,6 +278,14 @@ public:
 		}
 		return 0;
 	}
+	const T* GetConstData() const
+	{
+		if(m_pData)
+		{
+			return m_pData->GetData();
+		}
+		return 0;
+	}
 
 	T& operator*()                                
 	{

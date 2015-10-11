@@ -202,7 +202,7 @@ public:
 			return;
 		}
 
-		m_ListGate.Lock();
+		//m_ListGate.Lock();
 		std::pair<ObserverItr, ObserverItr> obsPair = m_list.equal_range(condition);
 		ObserverItr itr = obsPair.first;
 		while(itr != obsPair.second)
@@ -210,7 +210,7 @@ public:
 			itr->second->Notify(data, condition);
 			itr++;
 		}
-		m_ListGate.Unlock();
+		//m_ListGate.Unlock();
 	}
 
 protected:

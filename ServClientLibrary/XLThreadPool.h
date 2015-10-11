@@ -15,6 +15,8 @@ typedef XLAutoPtr::XLSharedSmPtr<XLEventQueue> EventQPtr;
 class ThreadPoolJob
 {
 public:
+	ThreadPoolJob()                 {}
+	virtual ~ThreadPoolJob()        {}
 	virtual void Work() = 0;
 };
 
@@ -31,12 +33,12 @@ enum ThreadPoolEventType
 class XLWorkThEventAllocator
 {
 public:
-	XLWorkThEventAllocator()  {}
-	~XLWorkThEventAllocator() {}
+	XLWorkThEventAllocator()                     {}
+	virtual ~XLWorkThEventAllocator()            {}
 	virtual bool GetEvent(XLThreadEvent* e) = 0;
 };
 
-class XLThWorkThread:public XLSimpleThreads
+class XLThWorkThread:private XLSimpleThreads
 {
 	XLWorkThEventAllocator*    m_Allocator;
 	bool                       m_bWorking;
@@ -46,8 +48,8 @@ private:
 	XLThWorkThread& operator = (const XLThWorkThread&);
 public:
 	XLThWorkThread();
-	~XLThWorkThread();
-	bool Create(XLWorkThEventAllocator* allocator);
+	virtual ~XLThWorkThread();
+	virtual bool Create(XLWorkThEventAllocator* allocator);
 	void Destroy();
 	void RunProgram();
 	bool IsEngaged()                       {return m_bWorking;}

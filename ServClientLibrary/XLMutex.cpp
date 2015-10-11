@@ -1,5 +1,5 @@
 //#include "StdAfx.h"
-#include "Windows.h"
+
 #include "XLMutex.h"
 
 XLMutex::XLMutex(void):
@@ -31,13 +31,21 @@ void XLMutex::Lock()
 	{
 		return;
 	}
-	if (mThreadId == (int) ::GetCurrentThreadId())
+#ifdef __WINDOWS_OS_
+	if (mThreadId == GetCurrentThreadId())
+#else
+	if (mThreadId == pthread_self())
+#endif
 	{
 		mCount++;
 		return;
 	}
 	mSem.Take();
-	mThreadId = (int) ::GetCurrentThreadId();
+#ifdef __WINDOWS_OS_
+	mThreadId = GetCurrentThreadId();
+#else
+	mThreadId = pthread_self();
+#endif
 	mCount    = 1;
 }
 bool XLMutex::Unlock()
@@ -47,7 +55,11 @@ bool XLMutex::Unlock()
 		return false;
 	}
 
-	if (mThreadId != (int) ::GetCurrentThreadId())
+#ifdef __WINDOWS_OS_
+	if (mThreadId != GetCurrentThreadId())
+#else
+	if (mThreadId != pthread_self())
+#endif
 	{
 		return false;
 	}
@@ -72,7 +84,11 @@ bool XLMutex::TryLock(int msec)
 		return false;
 	}
 
-	if (mThreadId == (int)::GetCurrentThreadId())
+#ifdef __WINDOWS_OS_
+	if (mThreadId == GetCurrentThreadId())
+#else
+	if (mThreadId == pthread_self())
+#endif
 	{
 		mCount++;
 
@@ -84,7 +100,11 @@ bool XLMutex::TryLock(int msec)
 		return false;
 	}
 
-	mThreadId = (int) ::GetCurrentThreadId();
+#ifdef __WINDOWS_OS_
+	mThreadId = GetCurrentThreadId();
+#else
+	mThreadId = pthread_self();
+#endif
 	mCount    = 1;
 
 	return true;

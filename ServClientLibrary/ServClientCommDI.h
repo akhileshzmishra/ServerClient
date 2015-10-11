@@ -1,4 +1,7 @@
-#pragma once
+#ifndef _SERVCLIENTCOMMDI_H__
+#define _SERVCLIENTCOMMDI_H__
+
+
 #include "DataInterpreter.h"
 #include "XLSocket.h"
 
@@ -7,21 +10,22 @@ class ServClientCommDI: public DataInterpreter
 public:
 	enum
 	{
-		SOCK_CONFIG,
+		IP = sizeof(int),
+		IPTYPE = IP + 6,
+		PORT = IPTYPE + sizeof(int),
 
+		MAXID
 	};
-	ServClientCommDI(XLThreadEvent* field);
+	ServClientCommDI(char* msg, int len);
 	~ServClientCommDI();
 
-	
-private:
-	void WriteConfigDataFromBuffer(CommContxtData* sc);
-	void ReadConfigDataToBuffer(CommContxtData* sc);
+	void GetData(char* data, int len, int dataIdentifier);
+	void GetData(int& data, int dataIdentifier);
 
-
-	//From DataInterpreter
-	void t_GetData(CommContxtData* data);
-	void t_SetData(CommContxtData* data);
-	int t_DataLength(CommContxtData* data);
+	void SetData(char* data, int len, int dataIdentifier);
+	void SetData(int& data, int dataIdentifier);
 
 };
+
+
+#endif

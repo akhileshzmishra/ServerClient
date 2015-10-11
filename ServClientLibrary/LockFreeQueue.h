@@ -14,9 +14,10 @@ class XLLFQ
 	IOItr                               mHead;
 	IOItr                               mTail;
 	unsigned int                        mMaxSize;
+	static const int MAX_DEF = INT_MAX;
 public:
 	XLLFQ():
-	mMaxSize(unsigned int(-1))
+	mMaxSize(MAX_DEF)
 	{
 		mQ.push_back(T());
 		mHead = mQ.begin();

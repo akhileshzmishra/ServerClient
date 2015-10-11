@@ -1,12 +1,9 @@
 #include "SocketSession.h"
-#include "bio.h"
-#include "ssl.h"
-#include "err.h"
-#include "engine.h"
-#include "conf.h"
 #include <string>
 
+#ifdef __WINDOWS_OS_
 #pragma comment(lib,"Ws2_32.lib") 
+#endif
 
 SESS_MANAGER_PTR  SocketSessionManager::m_pInstance = 0;
 #define CERTIFICATE_DIR "../openssl/cert"
@@ -24,11 +21,13 @@ m_pWSAData(0)
 void WinsockSession::Start()
 {
 	m_pWSAData = new WSADATA;
+#ifdef __WINDOWS_OS_
 	if( ::WSAStartup( 0x0002, m_pWSAData) )
 	{
 		delete m_pWSAData;
 		m_pWSAData  = 0;
 	}
+#endif
 }
 
 
@@ -41,6 +40,7 @@ WinsockSession::~WinsockSession()
 
 void WinsockSession::Stop()
 {
+#ifdef __WINDOWS_OS_
 	if(m_pWSAData )
 	{
 		// Wait for all sockets to sort themselves out
@@ -50,6 +50,7 @@ void WinsockSession::Stop()
 		delete m_pWSAData;
 		m_pWSAData  = 0;
 	}
+#endif
 }
 
 
@@ -65,7 +66,9 @@ WinsockSession::operator const WSADATA *()
 
 // Construction / destruction
 OpenSSLSession::OpenSSLSession():
+#ifdef _OPENSSL_ACTIVE_
 m_ConnectionCtx(0),
+#endif
 m_SARACertificate(CERTIFICATE_DIR"/"SARA_CERTIFICATE_FILE),
 m_SARAPvtKeyFile(CERTIFICATE_DIR"/"SARA_PVT_KEY_FILE),
 m_TrustedCACertificate(CERTIFICATE_DIR),
@@ -81,6 +84,7 @@ m_bStarted(false)
 
 void OpenSSLSession::Start()
 {
+#ifdef _OPENSSL_ACTIVE_
 	if(m_bStarted)
 	{
 		return;
@@ -92,7 +96,7 @@ void OpenSSLSession::Start()
 	//OpenSSL_add_all_algorithms();
 
 	//SSL protocol method
-	const SSL_METHOD *meth = SSLv3_method();
+    SSL_METHOD *meth = SSLv3_method();
 	//Connection context using SSL protocol method
 	m_ConnectionCtx = SSL_CTX_new(meth);
 	if(!m_ConnectionCtx)
@@ -154,6 +158,7 @@ void OpenSSLSession::Start()
 		//5. Set verification for host.
 		SSL_CTX_set_verify(m_ConnectionCtx, SSL_VERIFY_PEER, OpenSSLSession::SSL_VerifyCallback);
 	}
+#endif
 
 	m_bStarted = true;
 }
@@ -166,6 +171,7 @@ OpenSSLSession::~OpenSSLSession()
 
 void OpenSSLSession::Stop()
 {
+#ifdef _OPENSSL_ACTIVE_
 	if(!m_bStarted)
 	{
 		return;
@@ -184,17 +190,17 @@ void OpenSSLSession::Stop()
 	EVP_cleanup();
 	sk_SSL_COMP_free(SSL_COMP_get_compression_methods());
 	CRYPTO_cleanup_all_ex_data();
-
+#endif
 	m_bStarted = false;
 }
 
-
+#ifdef _OPENSSL_ACTIVE_
 int OpenSSLSession::SSL_VerifyCallback(int preverify_ok, X509_STORE_CTX *x509_ctx)
 {
 	//dummy
 	return 1;
 }
-
+#endif
 
 int OpenSSLSession::GetPassword_CB(char *out, int num, int rwflag, void *userdata)
 {

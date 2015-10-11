@@ -1,19 +1,22 @@
 #ifndef _XLSSL_SOCKET_H_
 #define _XLSSL_SOCKET_H_
+#include "SocketDependency.h"
 #include "SocketUtility.h"
 #include "XLBaseSocket.h"
 #include "XLAutoPtr.h"
+
+#ifdef _OPENSSL_ACTIVE_
 #include "bio.h"
 
 
 class XLSSLSocket: public XLBaseSocket
 {
-	SSL_CTX *   m_ConnectionCtx; 
-	BIO*        m_pSSLBio;
-	SSL*        m_SecureStruct;
-	bool        m_bSecure;
-	bool        m_bConnected;
-	SOCKET      m_Socket;
+	SSL_CTX *              m_ConnectionCtx;
+	BIO*                   m_pSSLBio;
+	SSL*                   m_SecureStruct;
+	bool                   m_bSecure;
+	bool                   m_bConnected;
+	Socket_Identifier      m_Socket;
 
 	typedef XLAutoPtr::XLSharedSmPtr<XLSSLSocket> SSLSockPtr;
 public:	
@@ -52,7 +55,7 @@ private:
 
 	bool CertifyPeer();
 
-	XLSSLSocket(SOCKET sock, class SocketConfig& config);
+	XLSSLSocket(Socket_Identifier sock, class SocketConfig& config);
 
 	bool CreateSocket();
 
@@ -60,6 +63,7 @@ private:
 };
 
 
+#endif // =#ifdef _OPENSSL_ACTIVE_
 
 
 #endif

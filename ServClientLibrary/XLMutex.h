@@ -3,9 +3,9 @@
 #include "XLSemaPhore.h"
 class XLMutex
 {
-	XLSemaPhore mSem;
-	int         mThreadId;
-	int         mCount;
+	XLSemaPhore               mSem;
+	Thread_Identifier         mThreadId;
+	int                       mCount;
 public:
 	XLMutex(void);
 	bool Create();

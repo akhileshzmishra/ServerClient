@@ -4,7 +4,7 @@
 //#include "afxwin.h"
 //#include "CommonHeader.h"
 #include "XLSemaPhore.h"
-#include "Windows.h"
+//#include "XLThreadDependency.h"
 #include <string>
 //#include "CommunicationHeader.h"
 //#include "IProjectInterface.h"
@@ -17,6 +17,8 @@ enum ThreadConfig
 class IThreadFunc
 {
 public:
+	IThreadFunc()               {}
+	virtual ~IThreadFunc()      {}
 	virtual void RunProgram() = 0;
 };
 
@@ -24,22 +26,21 @@ public:
 
 class XLSimpleThreads: public IThreadFunc
 {
-	XLSemaPhore   m_Sync1;
-	XLSemaPhore   m_Sync2;
-	int           m_handle;
-	std::string   mName;
-	int           mID;
-	int           mThreadID;
-	friend DWORD WINAPI RunSimpleThread(LPVOID data);
+	XLSemaPhore            m_Sync1;
+	XLSemaPhore            m_Sync2;
+	ThreadHandle           m_handle;
+	std::string            mName;
+	Thread_Identifier      mThreadID;
+	friend THFUN_RETVAL OTHER_EXPANSION RunSimpleThread(LPVOID data);
 public:
 	XLSimpleThreads(void);
-	~XLSimpleThreads(void);
+	virtual ~XLSimpleThreads(void);
 	virtual bool Create(const char *threadname, unsigned long stackSize = ThreadConfig_StackSize);
 	void Destroy();
-	bool IsCreated()         {return (mID != 0);}
-	void RunProgram()        {}
-	int ThreadID() const     {return (int)mID;}
-	const char* GetName()    {return mName.c_str();}
+	bool IsCreated()                       {return (mThreadID != 0);}
+	void RunProgram()                      {}
+	Thread_Identifier ThreadID() const     {return mThreadID;}
+	const char* GetName()                  {return mName.c_str();}
 
 	void Sleep(int millsec);
 
