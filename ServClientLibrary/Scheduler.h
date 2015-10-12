@@ -23,6 +23,7 @@ public:
 		START_PROCESSING = XLEventThreadEventType_Max + 1,
 		RESET_INPUTS,
 		ADD_A_JOB,
+		REMOVE_A_JOB,
 		NEXT_DAY_INPUT,
 		ALARM_INPUT,
 		MAX_INPUTS
@@ -34,6 +35,7 @@ public:
 	void Stop();
 
 	void SetJob(CScheduleTime t, CScheduledJobs* job);
+	void DeleteJob(CScheduleTime t, CScheduledJobs* job);
 
 	void SetAlarmPeriodicity(int p)
 	{
@@ -45,6 +47,7 @@ private:
 	virtual void t_OnEvent(const XLThreadEvent* e);
 	void StartProcessing(CScheduleTime& t);
 	void AddAJob(CScheduleTime time, CScheduledJobs* job);
+	void DeleteAJob(CScheduleTime time, CScheduledJobs* job);
 
 	void OnAlarm(XLAlarm* alarm, AlarmData* pData);
 
