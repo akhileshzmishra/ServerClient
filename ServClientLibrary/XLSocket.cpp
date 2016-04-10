@@ -5,7 +5,7 @@
 #include <iostream>
 #include "CommunicationHeader.h"
 #include "SocketSession.h"
-using namespace std;
+//using namespace std;
 
 #ifdef __WINDOWS_OS_
 #pragma comment(lib,"Ws2_32.lib") 
@@ -103,7 +103,7 @@ int XLSocket::ListenOnPort()
 	addr.sin_addr.s_addr = inet_addr(m_Config.GetHostNumber());
 
     int retryCount = 0;
-    while(bind(m_ListenSocket, (struct sockaddr*)&addr, sizeof(addr)) == SOCKET_ERROR) //Try binding
+    while((bind(m_ListenSocket, (PSOCKADDR)&addr, sizeof(addr)) == SOCKET_ERROR))//Try binding
     { 
 		// error
 		retryCount++;
@@ -119,7 +119,7 @@ int XLSocket::ListenOnPort()
         return RESULT_NO_BIND;
     }
     
-    int listenRes = listen(m_ListenSocket, m_Config.GetNumberofClients()); //Start listening
+    listen(m_ListenSocket, m_Config.GetNumberofClients()); //Start listening
 	if(m_Config.GetEventListener())
 	{
 		m_Config.GetEventListener()->OnListen();

@@ -8,9 +8,11 @@
 #ifndef SOCKETDEPENDENCY_H_
 #define SOCKETDEPENDENCY_H_
 
+#include "XLDependency.h"
 
 #ifndef __UNIX__
 
+/////////////For Windows OS////////////START
 #include <windows.h>
 #include <windowsx.h>
 #include <winsock.h>
@@ -20,8 +22,10 @@
 #endif
 
 typedef SOCKET Socket_Identifier;
-#else
 
+//////////////////////////////////////END
+#else
+/////////////For Linux based OS////////////START
 #include <netinet/in.h>
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -41,6 +45,7 @@ typedef int Socket_Identifier;
 
 typedef struct sockaddr_in SOCKADDR_IN;
 typedef struct sockaddr SOCKADDR;
+typedef struct sockaddr* PSOCKADDR;
 typedef struct sockaddr_in* LPSOCKADDR;
 
 #ifndef INVALID_SOCKET
@@ -51,8 +56,12 @@ typedef struct sockaddr_in* LPSOCKADDR;
 #define SOCKET_ERROR -1
 #endif
 
+////////////////////////////////////////////END
 #endif // Windows part
 
+
+//The below code is to make openssl active.
+//define this macro if you want to use openssl for socket communication
 #ifdef _OPENSSL_ACTIVE_
 #include "bio.h"
 #include "ssl.h"
@@ -60,6 +69,6 @@ typedef struct sockaddr_in* LPSOCKADDR;
 #include "engine.h"
 #include "conf.h"
 #endif // _OPENSSL_ACTIVE_
-
+////////////////////////////////////////////////////////////////////////
 
 #endif /* SOCKETDEPENDENCY_H_ */

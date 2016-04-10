@@ -69,8 +69,8 @@ OpenSSLSession::OpenSSLSession():
 #ifdef _OPENSSL_ACTIVE_
 m_ConnectionCtx(0),
 #endif
-m_SARACertificate(CERTIFICATE_DIR"/"SARA_CERTIFICATE_FILE),
-m_SARAPvtKeyFile(CERTIFICATE_DIR"/"SARA_PVT_KEY_FILE),
+m_SARACertificate(CERTIFICATE_DIR "/" SARA_CERTIFICATE_FILE),
+m_SARAPvtKeyFile(CERTIFICATE_DIR "/" SARA_PVT_KEY_FILE),
 m_TrustedCACertificate(CERTIFICATE_DIR),
 m_AuthPassword("Password"),
 m_CipherList("ALL"),

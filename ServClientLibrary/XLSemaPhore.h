@@ -7,7 +7,17 @@
 
 class XLSemaPhore
 {
+#ifdef _C_11_COMPILER
+    std::mutex                                 m_Mut;
+    std::mutex                                 m_ProtMutex;
+    std::condition_variable                    m_CV;
+    volatile int                               mSemCount;
+    volatile int                               mMaxCount;
+    volatile bool                              mbCreated;
+#else
 	XLSemaphoreID mID;
+#endif //_C_11_COMPILER
+    
 public:
 	XLSemaPhore();
 	virtual ~XLSemaPhore(void);
@@ -15,7 +25,14 @@ public:
 
 	bool Create(int count);
 	bool Create(int count, int maxcount);
-	bool IsCreated(void)                 { return mID != 0; }
+	bool IsCreated(void)
+    {
+#ifdef _C_11_COMPILER
+        return mbCreated;
+#else
+        return (mID != 0);
+#endif //_C_11_COMPILER
+    }
 	void Destroy();
 
 

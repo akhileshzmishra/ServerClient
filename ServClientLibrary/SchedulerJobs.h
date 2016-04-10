@@ -133,7 +133,7 @@ public:
 		SetSecond(s);
 		SetDow(dow);
 	}
-	static const int GetTotalWriteLength()
+	static int GetTotalWriteLength()
 	{
 		return sizeof(int)*4;
 	}
@@ -170,14 +170,6 @@ public:
 		}
 	}
 
-	std::string String()
-	{
-		char input[sizeof(int) * 4];
-		ReadFrom(input, CScheduleTime::GetTotalWriteLength());
-		std::string str(input, sizeof(int) * 4);
-		return str;
-	}
-
 
 	int GetHour(void)  	 const                      {return m_h;}
 	int GetMinute(void)  const	                    {return m_m;}
@@ -186,29 +178,13 @@ public:
 };
 
 
-enum RepeatableType
-{
-	RT_Once,
-	RT_Daily,
-	RT_Weekly,
-	RT_Monthly,
-	RT_Yearly,
-	RT_DurationWise,
-	RT_MaxType
-};
-
 
 class CScheduledJobs
 {
-	//typedef std::vector<CScheduleTime> ScheduleTimeList;
-	CScheduleTime                        m_Time;
-	std::string                          m_Name;
-	bool                                 m_bDone;
-	RepeatableType                       m_RepeatableType;
+	CScheduleTime m_Time;
+	std::string   m_Name;
 public:
-	CScheduledJobs():
-	m_bDone(false),
-	m_RepeatableType(RT_Once)
+	CScheduledJobs()
 	{
 	}
 	virtual ~CScheduledJobs()
@@ -230,17 +206,11 @@ public:
 		}
 	}
 
-	void SetRepeatableType(RepeatableType t)                      { m_RepeatableType = t; }
+	virtual void DoTheJob(CScheduleTime& time) {}
 
-	void Execute(CScheduleTime& time)
-	{
-		m_bDone = DoTheJob(time);
-	}
 
-	virtual bool DoTheJob(CScheduleTime& time)                    { return true; }
-	std::string GetName()                                         { return m_Name; }
-	CScheduleTime GetTime()                                       { return m_Time; }
-	bool Done()                                                   { return m_bDone; }
+	std::string GetName()                       {return m_Name;}
+	CScheduleTime GetTime()                     {return m_Time;}
 
 
 };

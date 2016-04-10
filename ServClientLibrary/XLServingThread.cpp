@@ -7,7 +7,7 @@ using namespace std;
 
 
 
-XLServingThread::XLServingThread(SocketConfig& config, char* threadname):
+XLServingThread::XLServingThread(SocketConfig& config, const char* threadname):
 XLEventThread(),
 m_pSocket(0),
 m_Name(threadname),

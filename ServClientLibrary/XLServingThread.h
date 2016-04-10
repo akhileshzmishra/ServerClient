@@ -46,7 +46,7 @@ public:
 		RMT_OneToOne,
 		RMT_None
 	};
-	XLServingThread(SocketConfig& config, char* threadname);
+	XLServingThread(SocketConfig& config, const char* threadname);
 	~XLServingThread(void);
 
 //USE THESE FUNCTIONS TO SET PROPERTY BEFORE CALLING Start FUNCTION

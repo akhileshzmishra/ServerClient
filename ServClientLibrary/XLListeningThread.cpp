@@ -76,8 +76,10 @@ void XLListeningThread::RunProgram()
 	{
 		return;
 	}
+   // m_Event.
 	while(!m_bExit)
 	{
+        //m_DataStorage = new char[MAX_MESS_LENGTH];
 		if(m_pSocket->Recieve(m_DataStorage, MAX_MESS_LENGTH) == SocketUtility::SocketNoError)
 		{
 			if(m_Listener)

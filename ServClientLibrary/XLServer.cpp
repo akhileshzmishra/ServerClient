@@ -19,7 +19,7 @@ public:
 	XLCService(XLServingThread* service = 0):
 	Service(service)
 	{
-		Gate.Create(1,1);
+		Gate.Create(0,1);
 	}
 
 	~XLCService()
@@ -72,7 +72,7 @@ void XLServer::Stop()
 
 long long int XLServer::StartAService(SocketConfig& coinfig)
 {
-	XLServingThread* t = new XLServingThread(coinfig,  "HANDLER_TH");
+    XLServingThread* t = new XLServingThread(coinfig, "HANDLER_TH");
 	t->SetListener(this);
 	
 	XLCService* newService = new XLCService(t);

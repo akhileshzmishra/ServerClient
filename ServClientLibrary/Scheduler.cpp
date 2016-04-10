@@ -21,9 +21,7 @@ void CScheduler::Start()
 		XLEventThread::Create("SCHDEDULER");
 		m_AlarmSem.Create(0,1);
 		m_Alarm.SetListener(this);
-		m_Alarm.SetFrequency(INT_MAX);
 		m_Alarm.SetAlarm(m_AlarmPeriodicity);
-		//m_AlarmSem.Give();
 	}
 }
 void CScheduler::Stop()
@@ -43,7 +41,6 @@ void CScheduler::t_OnEvent(const XLThreadEvent* e)
 	{
 	case START_PROCESSING:
 		{
-			std::cout << "START_PROCESSING" << std::endl;
 			CScheduleTime time;
 			e->Read(0, time);
 			StartProcessing(time);
@@ -53,7 +50,6 @@ void CScheduler::t_OnEvent(const XLThreadEvent* e)
 		break;
 	case ADD_A_JOB:
 		{
-			std::cout << "ADD_A_JOB" << std::endl;
 			CScheduleTime time;
 			CScheduledJobs* job = 0;
 			e->Read(0, time);
@@ -61,21 +57,11 @@ void CScheduler::t_OnEvent(const XLThreadEvent* e)
 			AddAJob(time, job);
 		}
 		break;
-	case REMOVE_A_JOB:
-		{
-			std::cout << "ADD_A_JOB" << std::endl;
-			CScheduleTime time;
-			CScheduledJobs* job = 0;
-			e->Read(0, time);
-			e->Read(CScheduleTime::GetTotalWriteLength(), job);
-			DeleteAJob(time, job);
-		}
 	case NEXT_DAY_INPUT:
-		SetCurrentDay();
+		m_CurrentDay = (m_CurrentDay + 1)%7;
 		SetCurrentTime();
 		break;
 	case ALARM_INPUT:
-		std::cout << "ALARM_INPUT" << std::endl;
 		AlarmInput();
 		break;
 	default:
@@ -86,42 +72,11 @@ void CScheduler::t_OnEvent(const XLThreadEvent* e)
 void CScheduler::SetJob(CScheduleTime t, CScheduledJobs* job)
 {
 	XLThreadEvent e;
+	CScheduleTime time;
 	e.SetType(ADD_A_JOB);
-	e.Write(0, t);
+	e.Write(0, time);
 	e.Write(CScheduleTime::GetTotalWriteLength(), job);
 	Put(&e);
-}
-
-void CScheduler::DeleteJob(CScheduleTime t, CScheduledJobs* job)
-{
-	XLThreadEvent e;
-	e.SetType(REMOVE_A_JOB);
-	e.Write(0, t);
-	e.Write(CScheduleTime::GetTotalWriteLength(), job);
-	Put(&e);
-}
-
-
-void CScheduler::DeleteAJob(CScheduleTime time, CScheduledJobs* job)
-{
-	if (job)
-	{
-		JobFindPair jfp = m_JobSet[time.GetDow()].equal_range(time);
-		JobItr itr = jfp.first;
-		while (itr != jfp.second)
-		{
-			if (itr->second == job)
-			{
-				break;
-			}
-			itr++;
-		}
-		if (itr != jfp.second)
-		{
-			m_JobSet[time.GetDow()].erase(itr);
-		}
-
-	}
 }
 
 void CScheduler::AddAJob(CScheduleTime time, CScheduledJobs* job)
@@ -131,15 +86,13 @@ void CScheduler::AddAJob(CScheduleTime time, CScheduledJobs* job)
 		m_JobSet[time.GetDow()].insert(JobInsPair(time, job));
 	}
 }
-
-
 void CScheduler::StartProcessing(CScheduleTime& t)
 {
 	JobFindPair fp = m_JobSet[m_CurrentDay].equal_range(t);
 	JobItr itr = fp.first;
 	while(itr != fp.second)
 	{
-		itr->second->Execute(t);
+		itr->second->DoTheJob(t);
 		itr++;
 	}
 }
@@ -147,7 +100,7 @@ void CScheduler::StartProcessing(CScheduleTime& t)
 void CScheduler::OnAlarm(XLAlarm* alarm, AlarmData* pData)
 {
 	XLThreadEvent e;
-	//m_AlarmSem.Take();
+	m_AlarmSem.Take();
 	e.SetType(ALARM_INPUT);
 	Put(&e);
 }
@@ -157,29 +110,25 @@ void CScheduler::AlarmInput()
 	CScheduleTime nowcsT;
 	SetCurrentTime(nowcsT);
 	JobItr itr = m_JobSet[m_CurrentDay].begin();
-	int CurrentDay = m_CurrentDay;
-	SetCurrentDay();
-	if (CurrentDay != m_CurrentDay)
+	if(((int)nowcsT >= CScheduleTime::FullDay()) && ((int)m_CurrentTime < CScheduleTime::FullDay()))
 	{
 		XLThreadEvent e;
 		e.SetType(NEXT_DAY_INPUT);
 		Put(&e);
-		//m_AlarmSem.Give();
+		m_AlarmSem.Give();
+		return;
 	}
-	else
+	while(itr != m_JobSet[m_CurrentDay].end())
 	{
-		while (itr != m_JobSet[m_CurrentDay].end())
+		if((itr->first > m_CurrentTime) && (itr->first < nowcsT))
 		{
-			if ((itr->first > m_CurrentTime) && (itr->first < nowcsT) && !itr->second->Done())
-			{
-				CScheduleTime bTime = itr->first;
-				itr->second->Execute(bTime);
-			}
-			itr++;
+			CScheduleTime bTime = itr->first;
+			itr->second->DoTheJob(bTime);
 		}
-		SetCurrentTime();
+		itr++;
 	}
-	//m_AlarmSem.Give();
+	SetCurrentTime();
+	m_AlarmSem.Give();
 }
 
 void CScheduler::SetCurrentTime()

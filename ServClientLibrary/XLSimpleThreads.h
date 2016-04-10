@@ -34,10 +34,17 @@ class XLSimpleThreads: public IThreadFunc
 	friend THFUN_RETVAL OTHER_EXPANSION RunSimpleThread(LPVOID data);
 public:
 	XLSimpleThreads(void);
-	virtual ~XLSimpleThreads(void);
+    virtual ~XLSimpleThreads(void);
 	virtual bool Create(const char *threadname, unsigned long stackSize = ThreadConfig_StackSize);
 	void Destroy();
-	bool IsCreated()                       {return (mThreadID != 0);}
+	bool IsCreated()
+    {
+#ifndef _C_11_COMPILER
+        return (mThreadID != 0);
+#else
+        return (m_handle != 0);
+#endif
+    }
 	void RunProgram()                      {}
 	Thread_Identifier ThreadID() const     {return mThreadID;}
 	const char* GetName()                  {return mName.c_str();}

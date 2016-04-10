@@ -60,6 +60,8 @@ void XLEventThread::StopMainLoop()
 		Put(&e);
 	}
 }
+
+
 void XLEventThread::RunProgram()
 {
 	if(!mCreated)
